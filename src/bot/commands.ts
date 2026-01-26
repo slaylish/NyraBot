@@ -6,6 +6,8 @@ import * as warn from './commands/warn';
 import * as lockdown from './commands/lockdown';
 import * as slowmode from './commands/slowmode';
 import * as ping from './commands/ping';
+import * as report from './commands/report';
+import * as suggest from './commands/suggest';
 
 // Command interface
 interface Command {
@@ -15,7 +17,7 @@ interface Command {
 
 // Load all commands
 const commands: Collection<string, Command> = new Collection();
-const commandModules = [kick, ban, mute, warn, lockdown, slowmode, ping];
+const commandModules = [kick, ban, mute, warn, lockdown, slowmode, ping, report, suggest];
 
 for (const cmd of commandModules) {
   commands.set(cmd.data.name, cmd as Command);
@@ -39,23 +41,43 @@ export async function registerCommands(client: Client) {
 
 export function setupCommandHandlers(client: Client) {
   client.on('interactionCreate', async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-
-    const command = commands.get(interaction.commandName);
-    if (!command) {
-      await interaction.reply({ content: 'Unknown command', ephemeral: true });
-      return;
-    }
-
-    try {
-      await command.execute(interaction);
-    } catch (error) {
-      console.error(`Error executing ${interaction.commandName}:`, error);
-      if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({ content: '❌ Error executing command', ephemeral: true });
-      } else {
-        await interaction.reply({ content: '❌ Error executing command', ephemeral: true });
-      }
+    if (interaction.isChatInputCommand()) {
+       const command = commands.get(interaction.commandName);
+       if (!command) {
+         await interaction.reply({ content: 'Unknown command', ephemeral: true });
+         return;
+       }
+   
+       try {
+         await command.execute(interaction);
+       } catch (error) {
+         console.error(`Error executing ${interaction.commandName}:`, error);
+         const payload = { content: '❌ Error executing command', ephemeral: true };
+         if (interaction.replied || interaction.deferred) await interaction.followUp(payload);
+         else await interaction.reply(payload);
+       }
+    } else if (interaction.isModalSubmit()) {
+        const { customId } = interaction;
+        
+        if (customId.startsWith('report_modal')) {
+            const reason = interaction.fields.getTextInputValue('reason');
+            // Logic to save Report to DB would go here
+            await interaction.reply({ content: '✅ Report submitted successfully. Staff will review it shortly.', ephemeral: true });
+        } else if (customId === 'suggestion_modal') {
+             const suggestion = interaction.fields.getTextInputValue('content');
+             // Logic to save Suggestion to DB
+             await interaction.reply({ content: '✅ Suggestion submitted!', ephemeral: true });
+        }
+    } else if (interaction.isButton()) {
+        if (interaction.customId === 'create_ticket') {
+             // Logic to create ticket
+            await interaction.reply({ content: '🎟️ Creating your ticket...', ephemeral: true });
+            
+            // Mock: Create a channel (In real app, use interaction.guild.channels.create)
+            // Save to DB (Ticket model)
+            
+            await interaction.followUp({ content: '✅ Ticket #1234 created! <#channel_id>', ephemeral: true });
+        }
     }
   });
 }

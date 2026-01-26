@@ -40,6 +40,8 @@ const modules: Module[] = [
       { label: 'Dashboard', href: 'support' },
       { label: 'Tickets', href: 'support/tickets' },
       { label: 'Appeals', href: 'support/appeals' },
+      { label: 'Whistleblower', href: 'support/reports' },
+      { label: 'Suggestions', href: 'support/suggestions' },
       { label: 'Settings', href: 'support/settings' },
     ]
   },
