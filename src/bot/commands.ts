@@ -1,96 +1,66 @@
-import { Client, REST, Routes, SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } from 'discord.js';
+import { Client, REST, Routes, Collection, ChatInputCommandInteraction } from 'discord.js';
+import * as kick from './commands/kick';
+import * as ban from './commands/ban';
+import * as mute from './commands/mute';
+import * as warn from './commands/warn';
+import * as lockdown from './commands/lockdown';
+import * as slowmode from './commands/slowmode';
+import * as ping from './commands/ping';
+
+// Command interface
+interface Command {
+  data: any;
+  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+}
+
+// Load all commands
+const commands: Collection<string, Command> = new Collection();
+const commandModules = [kick, ban, mute, warn, lockdown, slowmode, ping];
+
+for (const cmd of commandModules) {
+  commands.set(cmd.data.name, cmd as Command);
+}
 
 export async function registerCommands(client: Client) {
-    const commands = [
-        new SlashCommandBuilder()
-            .setName('kick')
-            .setDescription('Kick a user from the server.')
-            .addUserOption(option => option.setName('target').setDescription('The user to kick').setRequired(true))
-            .addStringOption(option => option.setName('reason').setDescription('Reason for kick'))
-            .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers),
-        
-        new SlashCommandBuilder()
-            .setName('ban')
-            .setDescription('Ban a user from the server.')
-            .addUserOption(option => option.setName('target').setDescription('The user to ban').setRequired(true))
-            .addStringOption(option => option.setName('reason').setDescription('Reason for ban'))
-            .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
+  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN!);
+  const commandData = commandModules.map(cmd => cmd.data.toJSON());
 
-        new SlashCommandBuilder()
-            .setName('mute')
-            .setDescription('Timeout a user.')
-            .addUserOption(option => option.setName('target').setDescription('The user to mute').setRequired(true))
-            .addIntegerOption(option => option.setName('duration').setDescription('Duration in minutes').setRequired(true))
-            .addStringOption(option => option.setName('reason').setDescription('Reason for mute'))
-            .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
-
-        new SlashCommandBuilder()
-            .setName('warn')
-            .setDescription('Warn a user.')
-            .addUserOption(option => option.setName('target').setDescription('The user to warn').setRequired(true))
-            .addStringOption(option => option.setName('reason').setDescription('Reason for warning').setRequired(true))
-            .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
-
-        new SlashCommandBuilder()
-            .setName('purge')
-            .setDescription('Delete messages.')
-            .addIntegerOption(option => option.setName('amount').setDescription('Number of messages to delete').setRequired(true))
-            .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
-
-         new SlashCommandBuilder()
-            .setName('lockdown')
-            .setDescription('Lock current channel.')
-            .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
-    ];
-
-    const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN!);
-
-    try {
-        console.log('Started refreshing application (/) commands.');
-        await rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID!), { body: commands });
-        console.log('Successfully reloaded application (/) commands.');
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    console.log('Started refreshing application (/) commands.');
+    await rest.put(
+      Routes.applicationCommands(process.env.DISCORD_CLIENT_ID!),
+      { body: commandData }
+    );
+    console.log('Successfully reloaded application (/) commands.');
+  } catch (error) {
+    console.error('Error registering commands:', error);
+  }
 }
 
 export function setupCommandHandlers(client: Client) {
-    client.on('interactionCreate', async interaction => {
-        if (!interaction.isChatInputCommand()) return;
+  client.on('interactionCreate', async interaction => {
+    if (!interaction.isChatInputCommand()) return;
 
-        const { commandName } = interaction;
+    const command = commands.get(interaction.commandName);
+    if (!command) {
+      await interaction.reply({ content: 'Unknown command', ephemeral: true });
+      return;
+    }
 
-        if (commandName === 'kick') {
-            const target = interaction.options.getUser('target');
-            const reason = interaction.options.getString('reason') ?? 'No reason provided';
-            await interaction.reply({ content: `👢 Kicked ${target?.tag} for: ${reason}`, ephemeral: true });
-        }
+    try {
+      await command.execute(interaction);
+    } catch (error) {
+      console.error(`Error executing ${interaction.commandName}:`, error);
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({ content: '❌ Error executing command', ephemeral: true });
+      } else {
+        await interaction.reply({ content: '❌ Error executing command', ephemeral: true });
+      }
+    }
+  });
+}
 
-        if (commandName === 'ban') {
-            const target = interaction.options.getUser('target');
-            const reason = interaction.options.getString('reason') ?? 'No reason provided';
-            await interaction.reply({ content: `🔨 Banned ${target?.tag} for: ${reason}`, ephemeral: true });
-        }
-
-        if (commandName === 'mute') {
-            const target = interaction.options.getUser('target');
-            const duration = interaction.options.getInteger('duration');
-             await interaction.reply({ content: `🤐 Muted ${target?.tag} for ${duration} minutes.`, ephemeral: true });
-        }
-        
-        if (commandName === 'warn') {
-             const target = interaction.options.getUser('target');
-             const reason = interaction.options.getString('reason');
-             // TODO: Save to DB
-             await interaction.reply({ content: `⚠️ Warned ${target?.tag} for: ${reason}`, ephemeral: true });
-        }
-
-        if (commandName === 'purge') {
-            const amount = interaction.options.getInteger('amount')!;
-            if (interaction.channel && 'bulkDelete' in interaction.channel) {
-                await interaction.channel.bulkDelete(amount);
-                await interaction.reply({ content: `Deleted ${amount} messages.`, ephemeral: true });
-            }
-        }
-    });
+// Export bot guild IDs for API
+export function getBotGuildIds(client: Client): string[] {
+  return [...client.guilds.cache.keys()];
 }

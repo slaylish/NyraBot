@@ -9,16 +9,23 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#030305',
-        surface: '#0a0a0f',
-        card: '#111116',
-        border: 'rgba(255,255,255,0.06)',
-        primary: '#8b5cf6',
+        background: '#0c0c0e',
+        surface: '#19191c',
+        'surface-hover': '#212124',
+        card: '#1e1e22',
+        border: 'rgba(255,255,255,0.08)',
+        primary: '#5865f2',
+        'primary-hover': '#4752c4',
         secondary: '#06b6d4',
-        accent: '#f43f5e',
+        danger: '#ef4444',
+      },
+      borderRadius: {
+        'xl': '12px',
+        '2xl': '17px',
+        '3xl': '24px',
       },
       fontFamily: {
-        sans: ['var(--font-outfit)', 'system-ui', 'sans-serif'],
+        sans: ['system-ui', 'sans-serif'],
       },
       animation: {
         'gradient': 'gradient 8s linear infinite',
@@ -38,10 +45,6 @@ module.exports = {
           '0%, 100%': { opacity: 1 },
           '50%': { opacity: 0.5 },
         },
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'hero-glow': 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.3), transparent)',
       },
     },
   },
