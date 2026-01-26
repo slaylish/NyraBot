@@ -46,7 +46,13 @@ const modules: Module[] = [
   { 
     label: 'Messages', 
     href: 'messages', 
-    icon: Icons.Message 
+    icon: Icons.Message,
+    submodules: [
+       { label: 'Builder', href: 'messages/builder' },
+       { label: 'Branding', href: 'messages/branding' },
+       { label: 'Responses', href: 'messages/responses' },
+       { label: 'Broadcast', href: 'messages/broadcast' },
+    ]
   },
   { 
     label: 'Settings', 

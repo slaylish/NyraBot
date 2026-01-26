@@ -9,6 +9,7 @@ import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { EmbedEditor } from '../components/EmbedEditor';
 import { EmbedData, ActionRow } from '../types';
+import { ChannelPicker } from '@/components/ui/ChannelPicker';
 
 interface BroadcastTowerProps {
   guildId: string;
@@ -73,12 +74,23 @@ export function BroadcastTower({ guildId }: BroadcastTowerProps) {
                       <Button size="sm" variant={targetType==='role'?'primary':'secondary'} onClick={()=>setTargetType('role')} className="flex-1">Roles</Button>
                   </div>
                   <div className="flex gap-2">
-                      <Input 
-                        value={currentTarget} 
-                        onChange={e => setCurrentTarget(e.target.value)} 
-                        placeholder={targetType === 'channel' ? "Channel ID" : "Role ID"}
-                        onKeyDown={e => e.key === 'Enter' && addTarget()}
-                      />
+                      {targetType === 'channel' ? (
+                          <ChannelPicker 
+                             guildId={guildId}
+                             value={currentTarget}
+                             onChange={setCurrentTarget}
+                             placeholder="Select channel target"
+                             className="flex-1"
+                          />
+                      ) : (
+                          <Input 
+                            value={currentTarget} 
+                            onChange={e => setCurrentTarget(e.target.value)} 
+                            placeholder="Role ID"
+                            onKeyDown={e => e.key === 'Enter' && addTarget()}
+                            className="flex-1"
+                          />
+                      )}
                       <Button onClick={addTarget}>Add</Button>
                   </div>
               </div>

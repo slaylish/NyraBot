@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import { Card } from '@/components/ui/Card';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { Icons } from '@/components/icons';
 
 interface GuildInfo {
@@ -52,27 +53,25 @@ export default function HomeOverview() {
   return (
 
       <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="h-18 px-8 border-b border-border flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-10 transition-all">
-          <div className="py-5">
-             <h1 className="text-xl font-bold font-display">Overview</h1>
-          </div>
-          {user && (
-            <a href="/account" className="flex items-center gap-3 hover:opacity-80 transition-opacity p-1 pr-4 rounded-full bg-surface border border-white/5">
-              {user.avatar ? (
-                <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`} className="w-8 h-8 rounded-full" alt="" />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold">
-                    {user.username.charAt(0)}
-                </div>
-              )}
-              <span className="text-sm font-medium">{user.username}</span>
-            </a>
-          )}
-        </header>
-
-        {/* Content */}
         <main className="p-8 space-y-8">
+           <PageHeader 
+             title="Overview" 
+             description={`Welcome back, ${user?.username || 'Commander'}`} 
+             action={
+               user && (
+                  <a href="/account" className="flex items-center gap-3 hover:opacity-80 transition-opacity p-1 pr-4 rounded-full bg-surface border border-white/5">
+                    {user.avatar ? (
+                      <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`} className="w-8 h-8 rounded-full" alt="" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold">
+                          {user.username.charAt(0)}
+                      </div>
+                    )}
+                    <span className="text-sm font-medium">{user.username}</span>
+                  </a>
+               )
+             }
+           />
           {/* Top Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>

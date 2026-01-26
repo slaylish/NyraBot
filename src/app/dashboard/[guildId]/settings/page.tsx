@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Icons } from '@/components/icons';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function SettingsPage() {
   const params = useParams();
@@ -41,10 +42,10 @@ export default function SettingsPage() {
 
   return (
     <div className="flex-1 p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 font-display">Settings</h1>
-          <p className="text-zinc-400">Core configuration</p>
-        </div>
+        <PageHeader 
+          title="Settings" 
+          description="Core configuration for your server" 
+        />
 
         <Card className="max-w-3xl space-y-8 p-10">
             <div className="flex items-center gap-2 pb-6 border-b border-white/5">

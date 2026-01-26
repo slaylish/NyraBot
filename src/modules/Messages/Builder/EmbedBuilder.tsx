@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { EmbedData, ActionRow } from '../types';
 import { EmbedEditor } from '../components/EmbedEditor';
+import { ChannelPicker } from '@/components/ui/ChannelPicker';
 
 interface EmbedBuilderProps {
   guildId: string;
@@ -42,11 +43,12 @@ export function EmbedBuilder({ guildId }: EmbedBuilderProps) {
         <h1 className="text-2xl font-bold font-display">Embed Builder</h1>
         
         <div className="flex gap-4 items-center bg-surface p-2 rounded-xl">
-             <Input 
+             <ChannelPicker 
+                guildId={guildId} 
                 value={channel} 
-                onChange={e => setChannel(e.target.value)} 
-                placeholder="Channel ID" 
-                className="w-40 bg-background border-none h-9"
+                onChange={setChannel} 
+                placeholder="Select channel..."
+                className="w-56"
              />
              <Button onClick={sendEmbed} disabled={sending} glow size="sm">
                 {sending ? 'Sending...' : 'Send to Channel'}

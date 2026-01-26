@@ -9,6 +9,7 @@ import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { EmbedEditor } from '../components/EmbedEditor';
 import { EmbedData, ActionRow } from '../types';
+import { ChannelPicker } from '@/components/ui/ChannelPicker';
 
 interface ResponseEditorProps {
   guildId: string;
@@ -127,9 +128,10 @@ export function ResponseEditor({ guildId }: ResponseEditorProps) {
           <div className="flex-1 overflow-y-auto">
              <div className="mb-6 max-w-md">
                  <Label>Channel ID</Label>
-                 <Input 
+                 <ChannelPicker 
+                    guildId={guildId}
                     value={current.channelId || ''} 
-                    onChange={e => updateCurrent('channelId', e.target.value)} 
+                    onChange={val => updateCurrent('channelId', val)} 
                     placeholder="Where to send this message"
                  />
                  <p className="text-xs text-zinc-500 mt-1">Leave empty to send to system channel (if applicable) or default.</p>

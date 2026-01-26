@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/Label';
 import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { EmbedData, ActionRow, ButtonStyle } from '../types';
+import { Markdown } from '@/components/ui/Markdown';
 
 interface EmbedEditorProps {
   value: { embed: EmbedData, components: ActionRow[] };
@@ -162,12 +163,12 @@ export function EmbedEditor({ value, onChange }: EmbedEditorProps) {
         <div className="flex flex-col gap-6">
             <h2 className="text-lg font-bold">Preview</h2>
             <div className="bg-[#313338] rounded-md p-4 border-l-4 shadow-lg" style={{ borderColor: embed.color }}>
-                {embed.title && <div className="text-base font-semibold text-white mb-2">{embed.title}</div>}
-                {embed.description && <div className="text-sm text-zinc-300 mb-4 whitespace-pre-wrap">{embed.description}</div>}
+                {embed.title && <div className="text-base font-semibold text-white mb-2"><Markdown content={embed.title} /></div>}
+                {embed.description && <div className="text-sm text-zinc-300 mb-4 whitespace-pre-wrap"><Markdown content={embed.description} /></div>}
                 {embed.fields.length > 0 && (
                     <div className="grid grid-cols-12 gap-2 mb-4">
                         {embed.fields.map((f, i) => (
-                            <div key={i} className={f.inline ? 'col-span-4' : 'col-span-12'}><div className="text-sm font-semibold text-white">{f.name}</div><div className="text-sm text-zinc-300">{f.value}</div></div>
+                            <div key={i} className={f.inline ? 'col-span-4' : 'col-span-12'}><div className="text-sm font-semibold text-white"><Markdown content={f.name} /></div><div className="text-sm text-zinc-300"><Markdown content={f.value} /></div></div>
                         ))}
                     </div>
                 )}

@@ -3,6 +3,7 @@ import { Outfit, Audiowide } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { MobileBlocker } from "@/components/MobileBlocker";
 
 const outfit = Outfit({ 
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function RootLayout({
     <html lang="en" className={`${outfit.variable} ${audiowide.variable}`}>
       <body className="font-sans antialiased bg-[#030305] text-white min-h-screen flex flex-col">
         <Navbar />
+        <MobileBlocker />
         <main className="flex-1">
           {children}
         </main>
