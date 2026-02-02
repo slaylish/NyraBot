@@ -1,39 +1,33 @@
 {
-  "name": "nyra-app",
-  "version": "0.1.0",
-  "private": true,
+  "name": "nyrabot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev:web\" \"npm run dev:bot\"",
-    "build": "next build",
-    "start": "concurrently \"next start -p 3498\" \"npm run dev:bot\"",
-    "lint": "next lint",
-    "dev:web": "next dev -p 3498",
-    "dev:bot": "tsx watch src/bot/index.ts",
-    "start:web": "next start -p 3498"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slaylish/NyraBot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/slaylish/NyraBot/issues"
+  },
+  "homepage": "https://github.com/slaylish/NyraBot#readme",
   "dependencies": {
-    "clsx": "^2.1.0",
-    "concurrently": "^8.2.2",
-    "discord.js": "^14.14.1",
-    "dotenv": "^16.4.4",
-    "framer-motion": "^11.0.3",
-    "mage-icons-react": "^0.7.0-beta",
-    "mongoose": "^8.1.1",
-    "next": "14.1.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "tailwind-merge": "^2.2.1",
-    "tsx": "^4.7.1"
+    "dotenv": "^17.2.3",
+    "mongoose": "^9.1.5",
+    "oceanic.js": "^1.13.0",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.0",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "@types/node": "^25.2.0",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
